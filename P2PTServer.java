@@ -1,9 +1,11 @@
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.Arrays;
 
 public class P2PTServer implements Runnable {
 	public static int PORT = 7014;
+	public static Object lock;
 	private DatagramSocket socket = null;
 
 	public P2PTServer() {
@@ -18,11 +20,11 @@ public class P2PTServer implements Runnable {
 	public void run() {
 		//receive packets from clients
 		//update the tweets
-		System.out.println("server running");
 		
 		
 		while (true) {
 			try {
+				
 				//Byte that will be used to receive the packet.
 				byte[] buf = new byte[256];
 				//Creates a new packet and receives it.
@@ -33,8 +35,17 @@ public class P2PTServer implements Runnable {
 				buf = packet.getData();
 				String data = new String(buf, "ISO-8859-1");
 				
-				//Temp: prints out received message.
-				System.out.println("data= " + data);
+				//Unpack data
+				String[] newdata = data.split(":");
+				String key = newdata[0];
+				String tweet = newdata[1];
+				
+				
+				Profile.updateSeen(key,System.currentTimeMillis(),tweet);
+				Profile.updateTweet(key, tweet);
+				
+			
+				
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}

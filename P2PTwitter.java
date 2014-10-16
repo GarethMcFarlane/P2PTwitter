@@ -2,10 +2,11 @@
 public class P2PTwitter {
 
 	public static void main(String args[]) {
-		P2PTServer server = new P2PTServer();
-		P2PTClient client = new P2PTClient(args[0]);
+		Thread server = new Thread(new P2PTServer());
+		Thread client = new Thread(new P2PTClient(args[0]));
 		Profile.loadProperties(args[0]);
-		//client.run();
-		server.run();
+		server.start();
+		client.start();
+		
 	}
 }
